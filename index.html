@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EskinLab - Каталог</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Определение CSS переменных для цветов */
+        :root {
+            --color-background-light: #e8dabf; /* Фон хедера и основной фон */
+            --color-text-primary: #7a2d19; /* Основной текст, границы, состояния кнопок */
+            --color-hover-text: #998c77; /* Текст при наведении */
+            --color-button-text: #f7ede1; /* Текст кнопок */
+            --color-menu-icon: #693328; /* Иконка закрытия меню */
+            --color-body-bg: #f8f9fa; /* Этот цвет больше не используется для фона всей страницы */
+            --color-scrollbar-track: #f1f1f1; /* Трек скроллбара */
+            --color-scrollbar-thumb: #888; /* Ползунок скроллбара */
+            --color-scrollbar-thumb-hover: #555; /* Ползунок скроллбара при наведении */
+            --color-modal-bg: #fefefe; /* Фон модальных окон */
+            --color-modal-close: #aaa; /* Кнопка закрытия модального окна */
+            --color-placeholder-bg-1: #e0e0e0; /* Фон плейсхолдера изображения */
+            --color-placeholder-text-1: #777777; /* Текст плейсхолдера изображения */
+            --color-placeholder-bg-2: #a2e4b8; /* Фон плейсхолдера изображения */
+            --color-placeholder-bg-3: #b2d8b5; /* Фон плейсхолдера изображения */
+            --color-placeholder-bg-4: #c1eac5; /* Фон плейсхолдера изображения */
+            --color-placeholder-text-2: #333333; /* Текст плейсхолдера изображения */
+
+            /* Цвета, вдохновленные Tailwind CSS (аппроксимация) */
+            --color-green-600: #22c55e;
+            --color-green-700: #16a34a;
+            --color-orange-accent: #f97316;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-red-500: #ef4444;
+            --color-red-600: #dc2626;
+            --color-gray-100: #f3f4f6;
+            --color-gray-800: #1f2937;
+            --color-gray-300: #d1d5db;
+            --color-gray-700: #374151;
+        }
+
+        /* Basic styles and font */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--color-background-light); /* Применение светлого фона ко всему телу страницы */
+            color: var(--color-gray-800); /* Дефолтный цвет текста */
+        }
+
+        /* Custom scrollbar for cart */
+        .cart-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cart-items::-webkit-scrollbar-track {
+            background: var(--color-scrollbar-track); /* Применение цвета трека скроллбара */
+            border-radius: 10px;
+        }
+        .cart-items::-webkit-scrollbar-thumb {
+            background: var(--color-scrollbar-thumb); /* Применение цвета ползунка скроллбара */
+            border-radius: 10px;
+        }
+        .cart-items::-webkit-scrollbar-thumb:hover {
+            background: var(--color-scrollbar-thumb-hover); /* Применение цвета ползунка при наведении */
+        }
+
+        /* Style for modals */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.5); /* Более темный оверлей */
+            backdrop-filter: blur(5px); /* Добавим размытие фона */
+        }
+        .modal-content {
+            background-color: var(--color-modal-bg); /* Применение цвета фона модальных окон */
+            margin: 5% auto; /* 10% from the top and centered */
+            padding: 30px; /* Увеличим отступы */
+            border: 1px solid var(--color-gray-300); /* Использование более светлого цвета для границы */
+            width: 90%; /* Увеличим ширину на мобильных */
+            max-width: 600px;
+            border-radius: 12px; /* Более скругленные углы */
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Добавим тень */
+        }
+        .close-button {
+            color: var(--color-modal-close); /* Применение цвета кнопки закрытия модального окна */
+            position: absolute;
+            top: 15px; /* Скорректируем позицию */
+            right: 15px; /* Скорректируем позицию */
+            font-size: 30px; /* Увеличим размер */
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--color-text-primary); /* Изменим цвет при наведении на основной текстовый цвет */
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Basic button styling */
+        .btn {
+            @apply px-6 py-3 rounded-full text-center font-semibold transition duration-200 ease-in-out; /* Более крупные и скругленные кнопки */
+            min-width: 120px; /* Минимальная ширина для единообразия */
+        }
+        .btn-primary {
+            /* Применение цветов из палитры для основной кнопки */
+            background-color: var(--color-text-primary);
+            color: var(--color-button-text);
+            border: 1px solid var(--color-text-primary);
+        }
+        .btn-primary:hover {
+            /* Применение цветов из палитры для основной кнопки при наведении */
+            background-color: var(--color-hover-text);
+            color: var(--color-text-primary);
+            border-color: var(--color-hover-text);
+        }
+        .btn-secondary {
+            /* Применение цветов из палитры для вторичной кнопки */
+            background-color: transparent; /* Прозрачный фон */
+            color: var(--color-text-primary); /* Основной текстовый цвет */
+            border: 1px solid var(--color-text-primary); /* Граница основного цвета */
+        }
+        .btn-secondary:hover {
+            /* Применение цветов из палитры для вторичной кнопки при наведении */
+            background-color: var(--color-background-light); /* Светлый фон при наведении */
+            color: var(--color-text-primary);
+            border-color: var(--color-background-light);
+        }
+        .btn-danger {
+            /* Применение цветов из палитры для кнопки опасности */
+            background-color: var(--color-red-500);
+            color: white;
+            border: 1px solid var(--color-red-500);
+        }
+        .btn-danger:hover {
+            /* Применение цветов из палитры для кнопки опасности при наведении */
+            background-color: var(--color-red-600);
+            border-color: var(--color-red-600);
+        }
+
+        /* Input field styling */
+        .input-field {
+            /* Применение цветов из палитры для полей ввода */
+            @apply w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2; /* Увеличим отступы */
+            border-color: var(--color-gray-300);
+            color: var(--color-gray-800); /* Цвет текста в поле ввода */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .input-field:focus {
+            /* Цвет рамки при фокусе */
+            border-color: var(--color-text-primary); /* Используем основной цвет */
+            box-shadow: 0 0 0 2px rgba(122, 45, 25, 0.3); /* Тень с прозрачностью основного цвета */
+        }
+
+        /* Применение цветов к конкретным элементам */
+        .header-bg {
+            background-color: var(--color-background-light); /* Фон хедера */
+        }
+
+        .logo-text {
+            color: var(--color-text-primary); /* Цвет текста логотипа - используем основной цвет */
+        }
+
+        .orange-dot {
+            color: var(--color-orange-accent); /* Цвет оранжевой точки в логотипе */
+        }
+
+        .heading-text {
+            color: var(--color-text-primary); /* Цвет заголовков - используем основной цвет */
+        }
+
+        .product-points {
+            color: var(--color-text-primary); /* Цвет баллов продукта - используем основной цвет */
+            font-weight: 700; /* Сделаем жирнее */
+        }
+
+        .balance-text {
+            color: var(--color-text-primary); /* Цвет баланса пользователя - используем основной цвет */
+            font-weight: 700; /* Сделаем жирнее */
+        }
+
+        .telegram-info-text {
+            color: var(--color-gray-600); /* Цвет текста информации о Telegram - чуть темнее */
+        }
+
+        .cart-empty-msg {
+            color: var(--color-gray-600); /* Цвет текста "Корзина пуста" */
+            text-align: center; /* Отцентрируем */
+            padding: 20px;
+        }
+
+        .cart-item-text-secondary {
+            color: var(--color-gray-700); /* Цвет вторичного текста в элементах корзины - еще темнее */
+        }
+
+        .cart-item-border {
+            /* Цвет границы между элементами корзины - светлее */
+            border-top-color: var(--color-gray-200);
+            border-right-color: var(--color-gray-200);
+            border-left-color: var(--color-gray-200);
+            border-bottom-color: var(--color-gray-200);
+        }
+
+        .cart-quantity-button {
+            background-color: var(--color-gray-100); /* Фон кнопок количества - светлее */
+            color: var(--color-text-primary); /* Цвет текста кнопок количества - основной цвет */
+            border: 1px solid var(--color-gray-300); /* Граница */
+            width: 30px; /* Фиксированная ширина */
+            height: 30px; /* Фиксированная высота */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px; /* Менее скругленные */
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .cart-quantity-button:hover {
+            background-color: var(--color-gray-200); /* Фон кнопок количества при наведении */
+            border-color: var(--color-gray-400);
+        }
+
+        .remove-item-button {
+            color: var(--color-red-600); /* Цвет кнопки удаления - темнее красный */
+            transition: color 0.2s ease-in-out;
+        }
+        .remove-item-button:hover {
+            /* Цвет кнопки удаления при наведении */
+        }
+
+        .remove-item-button:hover {
+            color: var(--color-red-700);
+        }
+
+        .checkout-label {
+            color: var(--color-gray-700); /* Цвет меток в форме оформления заказа */
+            font-weight: 500; /* Чуть жирнее */
+        }
+
+        .checkout-items-text {
+            color: var(--color-gray-800); /* Цвет текста элементов в оформлении заказа */
+        }
+
+        .checkout-total-text, .checkout-balance-text {
+            color: var(--color-text-primary); /* Цвет текста "Итого" и "Ваш баланс" - основной цвет */
+            font-weight: 700; /* Жирнее */
+        }
+
+        .checkout-error-text {
+            color: var(--color-red-600); /* Цвет текста ошибки оформления заказа - темнее красный */
+            font-weight: 500;
+        }
+
+        .footer-bg {
+            background-color: var(--color-gray-800); /* Фон футера */
+        }
+
+        .footer-text {
+            color: white; /* Цвет текста в футере */
+        }
+
+        /* Улучшения карточек продуктов */
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 12px; /* Более скругленные углы */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Легкая тень */
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px); /* Легкий подъем при наведении */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Усиление тени */
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px; /* Фиксированная высота изображения */
+            object-fit: cover; /* Обрезка изображения для заполнения */
+        }
+
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text-primary); /* Основной цвет текста для названия */
+            margin-bottom: 8px;
+            flex-grow: 1; /* Название занимает доступное место */
+        }
+
+        .product-points-display {
+            font-size: 1.2rem;
+            color: var(--color-text-primary); /* Цвет баллов продукта - используем основной цвет */
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart-button {
+            /* Стили кнопки "Добавить в корзину" */
+            width: 100%;
+            margin-top: auto; /* Прижимает кнопку к низу карточки */
+        }
+
+        /* Адаптивность для модальных окон */
+        @media (max-width: 640px) {
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+                width: 95%;
+            }
+            .btn {
+                @apply px-4 py-2 text-sm;
+                min-width: auto;
+            }
+        }
+
+        /* Удаляем этот стиль, так как фон применяется ко всему body */
+        /*
+        .main-content-bg {
+            background-color: var(--color-background-light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        */
+
+    </style>
+</head>
+<body>
+
+<header class="header-bg shadow-md sticky top-0 z-50">
+    <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="text-2xl font-bold logo-text">
+            EskinLab<span class="orange-dot">.</span>
+        </div>
+        <div>
+            <button id="view-cart-btn" class="btn btn-primary relative">
+                Корзина
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">0</span>
+            </button>
+        </div>
+    </nav>
+</header>
+
+<main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-semibold heading-text mb-8 text-center">Наши Продукты</h1>
+
+    <div id="product-catalog" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    </div>
+
+    <div class="mt-12 p-6 bg-white rounded-lg shadow-lg text-center">
+        <h2 class="text-xl font-semibold heading-text mb-2">Ваш баланс: <span id="user-balance" class="balance-text font-bold">Загрузка...</span> баллов</h2>
+        <p id="telegram-info" class="text-sm telegram-info-text mt-1">Загрузка данных пользователя...</p>
+    </div>
+</main>
+
+<div id="cart-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeCartModal()">&times;</span>
+        <h2 class="text-2xl font-semibold heading-text mb-6">Корзина</h2>
+        <div id="cart-items" class="cart-items max-h-60 overflow-y-auto mb-6 border-t border-b py-4 cart-item-border">
+            <p id="cart-empty-msg" class="cart-empty-msg">Ваша корзина пуста.</p>
+        </div>
+        <div class="text-right font-semibold mb-6 heading-text">
+            Итого: <span id="cart-total">0</span> баллов
+        </div>
+        <div class="flex justify-end space-x-3">
+            <button onclick="clearCart()" class="btn btn-danger">Очистить</button>
+            <button id="checkout-btn" onclick="openCheckoutModal()" class="btn btn-primary" disabled>Оформить заказ</button>
+        </div>
+    </div>
+</div>
+
+<div id="checkout-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeCheckoutModal()">&times;</span>
+        <h2 class="text-2xl font-semibold heading-text mb-6">Оформление заказа</h2>
+        <form id="checkout-form">
+            <div class="mb-4">
+                <label for="checkout-name" class="block text-sm font-medium checkout-label mb-1">Ваше имя:</label>
+                <input type="text" id="checkout-name" name="name" class="input-field" required>
+            </div>
+            <div class="mb-4">
+                <label for="checkout-phone" class="block text-sm font-medium checkout-label mb-1">Ваш телефон:</label>
+                <input type="tel" id="checkout-phone" name="phone" class="input-field" required>
+            </div>
+            <div class="mb-6 border-t pt-4 cart-item-border">
+                <h3 class="text-lg font-medium heading-text mb-3">Товары в заказе:</h3>
+                <div id="checkout-items" class="text-sm space-y-2 mb-4 checkout-items-text">
+                </div>
+                <p class="font-semibold checkout-total-text mb-1">Итого к списанию: <span id="checkout-total">0</span> баллов</p>
+                <p class="font-semibold checkout-balance-text">Ваш баланс: <span id="checkout-balance">0</span> баллов</p>
+                <p id="checkout-error" class="checkout-error-text text-sm mt-3"></p>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" id="place-order-btn" class="btn btn-primary">Подтвердить и списать баллы</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="footer-bg text-white mt-12 py-8">
+    <div class="container mx-auto px-4 text-center text-sm footer-text">
+        &copy; 2025 EskinLab. Все права защищены.
+    </div>
+</footer>
+
+<script>
+    // --- Configuration ---
+    // IMPORTANT: Replace with the actual URL where your Java backend is running
+    const API_BASE_URL = 'http://localhost:5431/api'; // Example: Use the URL from application.properties if deployed
+
+    // --- Product Data (Embedded) ---
+    // Ideally, fetch this from a backend endpoint like /api/products
+    const products = [
+        {
+            "id": 1,
+            "name": "Eskin Бальзам для волос женский с ароматом грейпфрута, 300ml",
+            "points": 450,
+            "inn": "2311342177",
+            // Add an image URL if available
+            "imageUrl": "https://placehold.co/300x300/a2e4b8/333333?text=Бальзам+Eskin" // Исправлено
+        },
+        {
+            "id": 2,
+            "name": "Лосьон для тела",
+            "points": 3500,
+            "inn": "772157761755",
+            "imageUrl": "https://placehold.co/300x300/b2d8b5/333333?text=Лосьон" // Исправлено
+        },
+        {
+            "id": 3,
+            "name": "Шампунь-брусок",
+            "points": 6000,
+            "inn": "2311342177",
+            "imageUrl": "https://placehold.co/300x300/c1eac5/333333?text=Шампунь" // Исправлено
+        }
+    ];
+
+    // --- State ---
+    let cart = []; // { id, name, points, quantity }
+    let userBalance = null;
+    let telegramUser = null; // To store Telegram user data
+
+    // --- DOM Elements ---
+    const productCatalog = document.getElementById('product-catalog');
+    const cartCount = document.getElementById('cart-count');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const cartModal = document.getElementById('cart-modal');
+    const checkoutModal = document.getElementById('checkout-modal');
+    const userBalanceDisplay = document.getElementById('user-balance');
+    const telegramInfoDisplay = document.getElementById('telegram-info');
+    const cartEmptyMsg = document.getElementById('cart-empty-msg');
+    const checkoutItemsContainer = document.getElementById('checkout-items');
+    const checkoutTotalDisplay = document.getElementById('checkout-total');
+    const checkoutBalanceDisplay = document.getElementById('checkout-balance');
+    const checkoutErrorDisplay = document.getElementById('checkout-error');
+    const placeOrderBtn = document.getElementById('place-order-btn');
+    const checkoutForm = document.getElementById('checkout-form');
+
+    // --- Functions ---
+
+    // Initialize Telegram Web App
+    function initTelegram() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            telegramUser = window.Telegram.WebApp.initDataUnsafe?.user;
+
+            if (telegramUser && telegramUser.id) {
+                console.log("Telegram User Data:", telegramUser);
+                telegramInfoDisplay.textContent = `ID пользователя: ${telegramUser.id}, Имя: ${telegramUser.first_name || 'N/A'}`;
+                fetchUserBalance(telegramUser.id);
+            } else {
+                console.error("Telegram user data not available or missing ID.");
+                telegramInfoDisplay.textContent = "Не удалось получить ID пользователя Telegram.";
+                userBalanceDisplay.textContent = "Ошибка";
+                showError("Не удалось получить данные пользователя Telegram. Убедитесь, что приложение запущено внутри Telegram.");
+            }
+            // Optional: Expand the Web App to full height
+            window.Telegram.WebApp.expand();
+        } else {
+            console.warn("Telegram Web App script not loaded or not in Telegram environment.");
+            telegramInfoDisplay.textContent = "Приложение должно быть запущено в Telegram.";
+            userBalanceDisplay.textContent = "N/A";
+            showError("Это приложение предназначено для работы внутри Telegram.");
+        }
+    }
+
+    // Fetch user balance from backend
+    async function fetchUserBalance(telegramId) {
+        if (!telegramId) {
+            userBalanceDisplay.textContent = 'Ошибка ID';
+            return;
+        }
+        try {
+            // IMPORTANT: Ensure your backend at API_BASE_URL is running and has CORS configured!
+            const response = await fetch(`localhost:5431/balance?telegramId=${telegramId}`);
+            if (!response.ok) {
+                // Try to get more specific error from backend if possible
+                let errorMsg = `HTTP error! status: ${response.status}`;
+                try {
+                    const errorData = await response.text(); // Or response.json() if backend sends structured errors
+                    errorMsg += ` - ${errorData}`;
+                } catch (e) { /* Ignore if response body is not readable */ }
+                throw new Error(errorMsg);
+            }
+            const balance = await response.json();
+            userBalance = parseFloat(balance);
+            userBalanceDisplay.textContent = userBalance.toFixed(0); // Show balance without decimals
+            updateCartUI(); // Update cart based on fetched balance
+        } catch (error) {
+            console.error('Error fetching balance:', error);
+            userBalanceDisplay.textContent = 'Ошибка';
+            showError(`Не удалось загрузить баланс. Убедитесь, что бэкенд (localhost:5431) запущен, доступен и настроен CORS. Ошибка: ${error.message}`);
+        }
+    }
+
+    // Render product catalog
+    function renderProducts() {
+        productCatalog.innerHTML = ''; // Clear existing products
+        products.forEach(product => {
+            // Use placeholder image if imageUrl is missing or invalid
+            const imageUrl = product.imageUrl || 'https://placehold.co/300x300/e0e0e0/777777?text=Нет+фото';
+            const errorImageUrl = 'https://placehold.co/300x300/e0e0e0/777777?text=Ошибка';
+
+            const productCard = `
+                    <div class="product-card">
+                        <img src="${imageUrl}" alt="${product.name}" class="product-image" onerror="this.onerror=null; this.src='${errorImageUrl}';">
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <p class="product-points-display">${product.points} баллов</p>
+                            <button onclick="addToCart(${product.id})" class="add-to-cart-button btn btn-primary">
+                                Добавить в корзину
+                            </button>
+                        </div>
+                    </div>
+                `;
+            productCatalog.innerHTML += productCard;
+        });
+    }
+
+    // Add item to cart
+    function addToCart(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        const cartItem = cart.find(item => item.id === productId);
+        if (cartItem) {
+            cartItem.quantity++;
+        } else {
+            cart.push({ ...product, quantity: 1 });
+        }
+        saveCart();
+        updateCartUI();
+        showNotification(`${product.name} добавлен в корзину!`);
+    }
+
+    // Remove item from cart
+    function removeFromCart(productId) {
+        cart = cart.filter(item => item.id !== productId);
+        saveCart();
+        updateCartUI();
+    }
+
+    // Decrease item quantity in cart
+    function decreaseQuantity(productId) {
+        const cartItem = cart.find(item => item.id === productId);
+        if (cartItem) {
+            cartItem.quantity--;
+            if (cartItem.quantity <= 0) {
+                removeFromCart(productId);
+            } else {
+                saveCart();
+                updateCartUI();
+            }
+        }
+    }
+
+    // Increase item quantity in cart
+    function increaseQuantity(productId) {
+        const cartItem = cart.find(item => item.id === productId);
+        if (cartItem) {
+            cartItem.quantity++;
+            saveCart();
+            updateCartUI();
+        }
+    }
+
+    // Clear the entire cart
+    function clearCart() {
+        cart = [];
+        saveCart();
+        updateCartUI();
+        // Don't close modal automatically, user might want to see it's empty
+        // closeCartModal();
+    }
+
+
+    // Update cart UI (count, items, total)
+    function updateCartUI() {
+        clearError("cart-items"); // Clear previous errors before updating
+        // Update cart count badge
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = totalItems;
+
+        // Update cart items list
+        cartItemsContainer.innerHTML = ''; // Clear existing items
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p id="cart-empty-msg" class="cart-empty-msg">Ваша корзина пуста.</p>';
+            checkoutBtn.disabled = true;
+        } else {
+            cart.forEach(item => {
+                const cartItemElement = `
+                        <div class="flex justify-between items-center py-3 border-b last:border-b-0 cart-item-border">
+                            <div>
+                                <p class="font-medium heading-text">${item.name}</p>
+                                <p class="text-sm cart-item-text-secondary">${item.points} баллов x ${item.quantity}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="decreaseQuantity(${item.id})" class="cart-quantity-button">-</button>
+                                <span class="w-6 text-center heading-text">${item.quantity}</span>
+                                <button onclick="increaseQuantity(${item.id})" class="cart-quantity-button">+</button>
+                                <button onclick="removeFromCart(${item.id})" class="ml-2 font-bold text-lg remove-item-button">&times;</button>
+                            </div>
+                        </div>
+                    `;
+                cartItemsContainer.innerHTML += cartItemElement;
+            });
+            checkoutBtn.disabled = false; // Initially enable if cart has items
+        }
+
+        // Update cart total
+        const totalPoints = cart.reduce((sum, item) => sum + item.points * item.quantity, 0);
+        cartTotal.textContent = totalPoints;
+
+        // Enable/disable checkout button based on balance and cart content
+        // Check if userBalance is a valid number before comparison
+        const isBalanceSufficient = typeof userBalance === 'number' && !isNaN(userBalance) && totalPoints <= userBalance;
+        checkoutBtn.disabled = cart.length === 0 || userBalance === null || !isBalanceSufficient;
+
+        if (cart.length > 0 && userBalance !== null && !isBalanceSufficient) {
+            if(document.getElementById('cart-modal').style.display === 'block') { // Only show if cart is open
+                showError("Недостаточно баллов для оформления заказа.", "cart-items");
+            }
+        }
+    }
+
+    // Show error message within a specific container
+    function showError(message, containerId = null) {
+        let errorContainer;
+        let errorElementId = 'error-message-' + (containerId || 'global');
+
+        if (containerId) {
+            errorContainer = document.getElementById(containerId);
+        } else {
+            // If no container ID, try to find a generic error display area or fallback to alert
+            errorContainer = document.getElementById('global-error-container'); // Add this div if needed
+            if (!errorContainer) {
+                showNotification(message, 'error'); // Fallback to alert
+                return;
+            }
+        }
+
+        let errorElement = document.getElementById(errorElementId);
+        if (!errorElement) {
+            errorElement = document.createElement('p');
+            errorElement.id = errorElementId;
+            // Apply Tailwind classes for styling
+            errorElement.className = 'text-sm mt-2 error-message checkout-error-text'; /* Применение цвета ошибки */
+            // Prepend error message in the cart for visibility
+            if (containerId === 'cart-items') {
+                errorContainer.prepend(errorElement);
+            } else {
+                errorContainer.appendChild(errorElement);
+            }
+        }
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+
+    // Clear error message from a specific container
+    function clearError(containerId) {
+        let errorElementId = 'error-message-' + (containerId || 'global');
+        const errorElement = document.getElementById(errorElementId);
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+        // Also clear checkout error specifically
+        checkoutErrorDisplay.textContent = '';
+    }
+
+    // Save cart to local storage
+    function saveCart() {
+        try {
+            localStorage.setItem('shoppingCart', JSON.stringify(cart));
+        } catch (e) {
+            console.error("Error saving cart to localStorage:", e);
+            showError("Не удалось сохранить корзину. Возможно, хранилище переполнено.");
+        }
+    }
+
+    // Load cart from local storage
+    function loadCart() {
+        try {
+            const savedCart = localStorage.getItem('shoppingCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+        } catch (e) {
+            console.error("Error loading cart from localStorage:", e);
+            localStorage.removeItem('shoppingCart'); // Clear corrupted data
+            cart = [];
+            showError("Ошибка загрузки корзины. Корзина была очищена.");
+        }
+    }
+
+    // --- Modal Handling ---
+    function openCartModal() {
+        updateCartUI(); // Ensure UI is up-to-date before showing
+        cartModal.style.display = 'block';
+    }
+
+    function closeCartModal() {
+        cartModal.style.display = 'none';
+    }
+
+    function openCheckoutModal() {
+        if (cart.length === 0) {
+            showNotification("Ваша корзина пуста.", "warning");
+            return;
+        }
+
+        const totalPoints = cart.reduce((sum, item) => sum + item.points * item.quantity, 0);
+
+        // Ensure userBalance is a number before comparing
+        if (typeof userBalance !== 'number' || isNaN(userBalance) || totalPoints > userBalance) {
+            showError("Недостаточно баллов для оформления заказа.", "cart-items"); // Show error in cart modal context
+            openCartModal(); // Re-open cart modal to show the error
+            return;
+        }
+
+        // Pre-fill name and phone if available from Telegram data
+        if (telegramUser) {
+            document.getElementById('checkout-name').value = `${telegramUser.first_name || ''} ${telegramUser.last_name || ''}`.trim();
+            // Note: Telegram doesn't usually provide phone number directly in initDataUnsafe.user
+            // document.getElementById('checkout-phone').value = telegramUser.phone_number || '';
+        }
+
+
+        // Populate checkout summary
+        checkoutItemsContainer.innerHTML = cart.map(item =>
+            `<div class="flex justify-between"><span class="heading-text">${item.name} (x${item.quantity})</span> <span class="product-points">${item.points * item.quantity} баллов</span></div>` /* Применение цветов в сводке заказа и улучшенное форматирование */
+        ).join('');
+        checkoutTotalDisplay.textContent = totalPoints;
+        checkoutBalanceDisplay.textContent = userBalance !== null ? userBalance.toFixed(0) : 'N/A';
+        checkoutErrorDisplay.textContent = ''; // Clear previous errors
+        placeOrderBtn.disabled = false; // Ensure button is enabled
+
+        closeCartModal(); // Close cart modal first
+        checkoutModal.style.display = 'block';
+    }
+
+    function closeCheckoutModal() {
+        checkoutModal.style.display = 'none';
+        checkoutForm.reset(); // Reset form fields
+        checkoutErrorDisplay.textContent = ''; // Clear errors
+    }
+
+    // Handle checkout form submission
+    async function handleCheckout(event) {
+        event.preventDefault(); // Prevent default form submission which reloads the page
+        placeOrderBtn.disabled = true; // Prevent double submission
+        placeOrderBtn.textContent = 'Обработка...'; // Indicate processing
+        checkoutErrorDisplay.textContent = ''; // Clear previous errors
+
+        if (!telegramUser || !telegramUser.id) {
+            checkoutErrorDisplay.textContent = "Ошибка: Не удалось получить ID пользователя Telegram.";
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.textContent = 'Подтвердить и списать баллы';
+            return;
+        }
+
+        const totalPoints = cart.reduce((sum, item) => sum + item.points * item.quantity, 0);
+
+        // Double check balance before submitting
+        if (typeof userBalance !== 'number' || isNaN(userBalance) || totalPoints > userBalance) {
+            checkoutErrorDisplay.textContent = "Ошибка: Недостаточно баллов.";
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.textContent = 'Подтвердить и списать баллы';
+            return;
+        }
+
+        const formData = new FormData(checkoutForm);
+        const orderData = {
+            telegramId: telegramUser.id,
+            name: formData.get('name').trim(),
+            phone: formData.get('phone').trim(),
+            // Adjust the 'items' structure based on EXACTLY what the LoyaltyBot.OrderRequest expects
+            // The Java code seems to expect 'points' per item type.
+            items: cart.map(item => ({
+                name: item.name,
+                points: item.points // Sending the base points per item type
+                // If the backend needs quantity, add it here and adjust the Java DTO:
+                // quantity: item.quantity
+            }))
+        };
+
+        // Basic validation
+        if (!orderData.name || !orderData.phone) {
+            checkoutErrorDisplay.textContent = "Пожалуйста, заполните имя и телефон.";
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.textContent = 'Подтвердить и списать баллы';
+            return;
+        }
+
+
+        console.log("Submitting Order:", JSON.stringify(orderData));
+
+        try {
+            // IMPORTANT: Ensure backend is running and CORS is configured!
+            const response = await fetch(`localhost:5431/order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add any other headers required by your backend (e.g., Authorization)
+                },
+                body: JSON.stringify(orderData),
+            });
+
+            const responseBody = await response.text(); // Read body regardless of status
+
+            if (!response.ok) {
+                // Try to parse backend error message if available
+                throw new Error(`Ошибка сервера: ${response.status} - ${responseBody || 'Нет данных об ошибке'}`);
+            }
+
+            console.log("Order Response:", responseBody);
+
+            // Success
+            showNotification("Заказ успешно оформлен! Баллы списаны.", 'success');
+            clearCart(); // Clear cart after successful order
+            closeCheckoutModal();
+            // Re-fetch balance immediately to show updated value
+            await fetchUserBalance(telegramUser.id); // Use await to ensure balance updates before UI might refresh
+
+        } catch (error) {
+            console.error('Error placing order:', error);
+            checkoutErrorDisplay.textContent = `Ошибка оформления заказа: ${error.message}.`;
+            // Don't re-enable the button immediately, let user review error
+            placeOrderBtn.disabled = false; // Re-enable button on error
+            placeOrderBtn.textContent = 'Подтвердить и списать баллы';
+        }
+    }
+
+    // Show simple notification (can be replaced with a more sophisticated library)
+    function showNotification(message, type = 'info') {
+        // Simple alert for now, replace with a styled div if needed
+        // Consider using a more user-friendly notification system
+        const prefix = type === 'error' ? 'Ошибка: ' : (type === 'success' ? 'Успех: ' : '');
+        alert(`${prefix}${message}`);
+    }
+
+
+    // --- Event Listeners ---
+    document.getElementById('view-cart-btn').addEventListener('click', openCartModal);
+    checkoutForm.addEventListener('submit', handleCheckout);
+
+    // Close modal if clicked outside the content area (optional, can be annoying)
+    window.onclick = function(event) {
+        if (event.target == cartModal) {
+            closeCartModal();
+        }
+        if (event.target == checkoutModal) {
+            closeCheckoutModal();
+        }
+    }
+
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        initTelegram(); // Initialize Telegram integration first
+        loadCart();
+        renderProducts();
+        updateCartUI(); // Initial UI update based on loaded cart
+        // Note: fetchUserBalance is called within initTelegram after getting the ID
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Название продукта",
+      "points": 4500,
+      "image": "https://example.com/image.jpg"
+    }
+  ]
+}
